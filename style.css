@@ -42,10 +42,15 @@ header a:hover {
         margin: 10px 0;
     }
 }
-.images {
+.imgaes {
     display: flex;
     justify-content: center;
-    gap: 30px;
+    align-items: center;
     margin-top: 20px;
-  }
+}
 
+.imgaes img {
+    max-width: 50%;
+    height: auto;
+    border-radius: 10px; 
+}
