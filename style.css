@@ -6,7 +6,6 @@ body {
     background-color: #f4f4f4;
 }
 
-/* Header Styles */
 header {
     background-color: #0077b6;
     color: white;
@@ -14,7 +13,6 @@ header {
     padding: 20px;
 }
 
-/* Navigation Styles */
 header ul {
     list-style: none;
     padding: 0;
