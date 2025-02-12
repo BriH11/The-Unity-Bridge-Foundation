@@ -5,9 +5,9 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: Georgia, 'Times New Roman', Times, serif, sans-serif;
     background-color: #f9f9f9;
-    color: #333;
+    color: #181717;
     text-align: center;
     padding: 20px;
 }
@@ -40,10 +40,19 @@ select:hover {
 #gallery {
   padding: 20px 0;
 }
-
+h3 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 10px;
+}
 h2 {
   font-size: 2rem;
   color: #333;
+  margin-bottom: 10px;
+}
+h1 {
+  font-size: 0.90rem;
+  color: #9b4b80;
   margin-bottom: 10px;
 }
 
@@ -69,7 +78,7 @@ h2 {
 
 .image-card p {
   font-size: 1rem;
-  color: #555;
+  color: #120e0e;
   margin-top: 8px;
 }
 
