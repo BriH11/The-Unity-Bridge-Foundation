@@ -12,14 +12,156 @@
     </header>
     <select onchange="location = this.value;">
         <option value="">More About Us</option>
-        <option value="history.html">History</option>
+        <option value="events.html">Events</option>
         <option value="contact.html">Contact Us</option>
         <option value="policy.html">Policy</option>
         <option value="signup.html">Join Us</option>
       </select>
-    <p> Email:
-        Phone Number: 
+      <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 50%;
+            margin: 50px auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        h2 {
+            text-align: center;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label, input, textarea {
+            margin-bottom: 10px;
+        }
+        input, textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #c119e3;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .social-links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .social-links a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Contact Us</h2>
+        <form action="send_email.php" method="post">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="message">Message:</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+
+            <button type="submit">Send Message</button>
+        </form>
+        <div class="social-links">
+            <h3>Follow Us</h3>
+            <a href="https://www.instagram.com/the_unity_bridge_foundation/" target="_blank">Instagram|</a>
+            <a href="https://x.com/UnityBridge26" target="_blank">X|</a>
+            <a href="https://www.facebook.com/profile.php?id=61573124309473" target="_blank">Facebook</a>
+            
+        </div>
+        <div class="contact-info">
+            <h3>Contact Directly</h3>
+            <p>Email: <a href="mailto:theunitybridgefoundation.com">theunitybridgefoundation.com</a></p>
+            <p>Phone: <a href="tel:+12488606774">(248) 860-6774</a></p>
+        </div>
+    </div>
+</body>
+</html>
+        </div>
+    </div>
+</body>
+    <section id="faq" style="background-color: #f9f9f9; padding: 50px 0;">
+    <div class="container" style="width: 80%; margin: 0 auto;">
+        <h2 style="text-align: center; font-size: 2em; margin-bottom: 30px;">Frequently Asked Questions</h2>
         
-    </p>
+        <div class="faq-item" style="margin-bottom: 20px;">
+            <button class="faq-question" style="background-color: #f3edf400; color: rgb(14, 0, 0); padding: 15px; width: 100%; text-align: left; border: none; font-size: 1.1em; border-radius: 5px; cursor: pointer;">
+                What services does The Unity Bridge Foundation provide?
+            </button>
+            <div class="faq-answer" style="padding: 15px; background-color: white; border: 1px solid #020000; border-radius: 5px; display: none;">
+                <p>We provide community support, educational programs, and cultural outreach initiatives to strengthen unity and empowerment in our local communities.</p>
+            </div>
+        </div>
+
+        <div class="faq-item" style="margin-bottom: 20px;">
+            <button class="faq-question" style="background-color: #c119e300; color: rgb(5, 0, 0); padding: 15px; width: 100%; text-align: left; border: none; font-size: 1.1em; border-radius: 5px; cursor: pointer;">
+                How can I get involved with your programs?
+            </button>
+            <div class="faq-answer" style="padding: 15px; background-color: white; border: 1px solid #ddd; border-radius: 5px; display: none;">
+                <p>You can get involved by volunteering, attending our events, or donating to support our initiatives. Visit our "Join Us" page for more details!</p>
+            </div>
+        </div>
+
+        <div class="faq-item" style="margin-bottom: 20px;">
+            <button class="faq-question" style="background-color: #c119e300; color: rgb(8, 0, 0); padding: 15px; width: 100%; text-align: left; border: none; font-size: 1.1em; border-radius: 5px; cursor: pointer;">
+                Where are your events held?
+            </button>
+            <div class="faq-answer" style="padding: 15px; background-color: white; border: 1px solid #070000; border-radius: 5px; display: none;">
+                <p>Our events are held in various locations around the community. Check our "Events" page for upcoming event locations and dates.</p>
+            </div>
+        </div>
+
+        <div class="faq-item" style="margin-bottom: 20px;">
+            <button class="faq-question" style="background-color: #c119e300; color: rgb(7, 0, 0); padding: 15px; width: 100%; text-align: left; border: none; font-size: 1.1em; border-radius: 5px; cursor: pointer;">
+                How can I contact The Unity Bridge Foundation?
+            </button>
+            <div class="faq-answer" style="padding: 15px; background-color: white; border: 1px solid #ddd; border-radius: 5px; display: none;">
+                <p>You can reach us by email at <a href="mailto:theunitybridgefoundation@gmail.com">theunitybridgefoundation@gmail.com</a> or call us at <a href="tel:+12488606774">(248) 860-6774</a>.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Script to toggle the FAQ answers
+    document.querySelectorAll('.faq-question').forEach(function(button) {
+        button.addEventListener('click', function() {
+            var answer = this.nextElementSibling;
+            if (answer.style.display === "none" || answer.style.display === "") {
+                answer.style.display = "block";
+            } else {
+                answer.style.display = "none";
+            }
+        });
+    });
+</script>
+
+</html>
+    <p>*text here*</p>
 </body>
 </html>

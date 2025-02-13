@@ -45,13 +45,25 @@ h3 {
   color: #333;
   margin-bottom: 10px;
 }
+h4 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 10px;
+}
+h5 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 10px;
+}
 h2 {
   font-size: 1.6rem;
   color: #333;
   margin-bottom: 10px;
+  display: grid center;
 }
+
 h1 {
-  font-size: 0.90rem;
+  font-size: 0.80rem;
   color: #1b0112;
   margin-bottom: 10px;
 }
@@ -83,7 +95,7 @@ h1 {
 }
 
 #gallery {
-  display: grid;
+  display: grid ;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
+  gap: 15px;
 }

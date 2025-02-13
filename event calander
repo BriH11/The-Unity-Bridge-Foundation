@@ -1,0 +1,255 @@
+<select onchange="location = this.value;">
+    <option value="">More About Us</option>
+    <option value="history.html">Events</option>
+    <option value="contact.html">Contact Us</option>
+    <option value="policy.html">Policy</option>
+    <option value="signup.html">Join Us</option>
+  </select>
+
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Google Calendar-like Grid Calendar</title>
+      <style>
+          body {
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 0;
+              background-color: #f4f4f4;
+          }
+          .container {
+              width: 80%;
+              margin: 50px auto;
+              background-color: white;
+              padding: 20px;
+              box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+              border-radius: 8px;
+          }
+          .calendar-header {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              padding: 10px;
+              background-color: #f7f7f7;
+              border-radius: 8px;
+          }
+          .calendar-header h2 {
+              margin: 0;
+          }
+          .calendar-header button {
+              background-color: #c119e3;
+              color: white;
+              border: none;
+              padding: 10px;
+              cursor: pointer;
+              border-radius: 5px;
+          }
+          .calendar-grid {
+              display: grid;
+              grid-template-columns: repeat(7, 1fr);
+              gap: 1px;
+              margin-top: 20px;
+          }
+          .calendar-grid .day {
+              padding: 10px;
+              text-align: center;
+              background-color: #f4f4f4;
+              min-height: 100px;
+              cursor: pointer;
+              position: relative;
+          }
+          .calendar-grid .day:hover {
+              background-color: #e4e4e4;
+          }
+          .calendar-grid .day-header {
+              font-weight: bold;
+              padding: 5px;
+              background-color: #f0f0f0;
+          }
+          .event {
+              background-color: #c119e3;
+              color: white;
+              font-size: 10px;
+              border-radius: 5px;
+              padding: 2px 5px;
+              margin-top: 5px;
+              text-align: center;
+              cursor: pointer;
+          }
+          .event-details {
+              padding: 5px;
+              border: 1px solid #ddd;
+              background-color: #f4f4f4;
+              border-radius: 5px;
+          }
+          .event-popup {
+              display: none;
+              position: fixed;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              background: white;
+              padding: 20px;
+              box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+              border-radius: 8px;
+              width: 300px;
+          }
+          .event-popup input, .event-popup textarea {
+              width: 100%;
+              padding: 10px;
+              margin-bottom: 10px;
+              border: 1px solid #ddd;
+              border-radius: 5px;
+          }
+          .event-popup button {
+              background-color: #c119e3;
+              color: white;
+              padding: 10px;
+              border: none;
+              border-radius: 5px;
+              cursor: pointer;
+          }
+          .event-popup .close-btn {
+              background-color: #ff4c4c;
+          }
+      </style>
+  </head>
+  <body>
+      <div class="container">
+          <div class="calendar-header">
+              <button id="prevMonth">&lt; Previous Month</button>
+              <h2 id="monthTitle"></h2>
+              <button id="nextMonth">Next Month &gt;</button>
+          </div>
+          
+          <div class="calendar-grid" id="calendarGrid">
+              <!-- Calendar days will be inserted dynamically here -->
+          </div>
+      </div>
+  
+      <!-- Event Popup Modal -->
+      <div id="eventPopup" class="event-popup">
+          <h3>Add Event</h3>
+          <input type="text" id="eventTitle" placeholder="Event Title">
+          <textarea id="eventDescription" placeholder="Event Description"></textarea>
+          <button id="saveEvent">Save Event</button>
+          <button id="closePopup" class="close-btn">Close</button>
+      </div>
+  
+      <script>
+          const eventData = {};  // Store events for each date in the format: "YYYY-MM-DD"
+          const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  
+          let currentMonth = new Date();  // Default to current month
+  
+          // Format date to YYYY-MM-DD for easy storage and comparison
+          function formatDate(date) {
+              return date.toISOString().split('T')[0];
+          }
+  
+          // Get the first and last days of the month
+          function getMonthBounds(month, year) {
+              const firstDay = new Date(year, month, 1); // First day of the month
+              const lastDay = new Date(year, month + 1, 0); // Last day of the month
+              return { firstDay, lastDay };
+          }
+  
+          // Render the calendar for the current month
+          function renderCalendar() {
+              const { firstDay, lastDay } = getMonthBounds(currentMonth.getMonth(), currentMonth.getFullYear());
+  
+              // Update the month title
+              const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+              document.getElementById("monthTitle").textContent = `${monthNames[firstDay.getMonth()]} ${firstDay.getFullYear()}`;
+  
+              const calendarGrid = document.getElementById("calendarGrid");
+              calendarGrid.innerHTML = '';
+  
+              // Add day headers (Sun, Mon, Tue, etc.)
+              daysOfWeek.forEach(day => {
+                  const header = document.createElement("div");
+                  header.classList.add("day-header");
+                  header.textContent = day;
+                  calendarGrid.appendChild(header);
+              });
+  
+              // Fill in the days of the month
+              let currentDate = new Date(firstDay);
+              currentDate.setDate(currentDate.getDate() - currentDate.getDay()); // Go back to the previous Sunday
+              
+              // Loop through the whole grid (6 rows for a month)
+              for (let i = 0; i < 6; i++) {
+                  for (let j = 0; j < 7; j++) {
+                      const dayCell = document.createElement("div");
+                      dayCell.classList.add("day");
+  
+                      // Check if the date is within the current month
+                      const dayString = formatDate(currentDate);
+                      if (currentDate.getMonth() === firstDay.getMonth()) {
+                          dayCell.textContent = currentDate.getDate();
+                          dayCell.onclick = () => openEventPopup(dayString);
+  
+                          // Display events for the current day if any
+                          if (eventData[dayString]) {
+                              const eventDiv = document.createElement("div");
+                              eventDiv.classList.add("event");
+                              eventDiv.textContent = eventData[dayString].title;
+                              dayCell.appendChild(eventDiv);
+                          }
+                      }
+  
+                      calendarGrid.appendChild(dayCell);
+                      currentDate.setDate(currentDate.getDate() + 1); // Move to the next day
+                  }
+              }
+          }
+  
+          // Open the event popup to add/edit an event
+          function openEventPopup(date) {
+              // If there's already an event, load its data
+              const event = eventData[date] || { title: '', description: '' };
+              document.getElementById("eventTitle").value = event.title;
+              document.getElementById("eventDescription").value = event.description;
+  
+              // Set up the save button to store the event
+              document.getElementById("saveEvent").onclick = () => {
+                  eventData[date] = {
+                      title: document.getElementById("eventTitle").value,
+                      description: document.getElementById("eventDescription").value
+                  };
+                  renderCalendar(); // Re-render the calendar with the new event
+                  document.getElementById("eventPopup").style.display = 'none';
+              };
+  
+              // Show the event popup
+              document.getElementById("eventPopup").style.display = 'block';
+          }
+  
+          // Close the event popup without saving
+          document.getElementById("closePopup").onclick = () => {
+              document.getElementById("eventPopup").style.display = 'none';
+          };
+  
+          // Navigate to the previous month
+          document.getElementById("prevMonth").onclick = () => {
+              currentMonth.setMonth(currentMonth.getMonth() - 1);
+              renderCalendar();
+          };
+  
+          // Navigate to the next month
+          document.getElementById("nextMonth").onclick = () => {
+              currentMonth.setMonth(currentMonth.getMonth() + 1);
+              renderCalendar();
+          };
+  
+          // Initial render
+          renderCalendar();
+      </script>
+  </body>
+  </html>
+  
+    </script>
+</body>
+</html>

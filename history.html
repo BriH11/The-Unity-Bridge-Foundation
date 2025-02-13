@@ -3,20 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>History</title>
-    <link rel="stylesheet" href="screen.css">
+    <title>Google Calendar-like Event Calendar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 80%;
+            margin: 50px auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #f7f7f7;
+            border-radius: 8px;
+        }
+        .calendar-header h2 {
+            margin: 0;
+        }
+        .calendar-header button {
+            background-color: #c119e3;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .calendar-body {
+            display: flex;
+            flex-direction: column;
+        }
+        .calendar-body .day {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            padding: 10px;
+        }
+        .calendar-body .day-header {
+            font-weight: bold;
+            padding: 0 10px;
+            width: 100px;
+            text-align: center;
+        }
+        .time-slot {
+            padding: 10px;
+            background-color: #f4f4f4;
+            border-radius: 5px;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+        .event-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            width: 300px;
+        }
+        .event-popup input, .event-popup textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .event-popup button {
+            background-color: #c119e3;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .event-popup .close-btn {
+            background-color: #ff4c4c;
+        }
+        .event {
+            background-color: #c119e3;
+            color: white;
+            border-radius: 5px;
+            padding: 5px;
+            margin-top: 5px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .event-details {
+            padding: 5px;
+            border: 1px solid #ddd;
+            background-color: #f4f4f4;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <button><a href="index.html">Home</a></button>
-    </header>
-    <select onchange="location = this.value;">
-        <option value="">More About Us</option>
-        <option value="history.html">History</option>
-        <option value="contact.html">Contact Us</option>
-        <option value="policy.html">Policy</option>
-        <option value="signup.html">Join Us</option>
-      </select>
-    <p>Hello we are awesome</p>
+    <div class="container">
+        <div class="calendar-header">
+            <button id="prevWeek">&lt; Previous Week</button>
+            <h2 id="weekTitle"></h2>
+            <button id="nextWeek">Next Week &gt;</button>
+        </div>
+        
+        <div class="calendar-body" id="calendarBody">
+            <!-- Calendar days will be inserted dynamically here -->
+        </div>
+    </div>
+
+    <!-- Event Popup Modal -->
+    <div id="eventPopup" class="event-popup">
+        <h3>Add Event</h3>
+        <input type="text" id="eventTitle" placeholder="Event Title">
+        <textarea id="eventDescription" placeholder="Event Description"></textarea>
+        <button id="saveEvent">Save Event</button>
+        <button id="closePopup" class="close-btn">Close</button>
+    </div>
+
+    <script>
+        const eventData = {};  // Store events for each date
+        const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const timeSlots = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"];
+
+        let currentStartDate = new Date();  // Default start date for the current week
+
+        // Format date to YYYY-MM-DD for easy storage and comparison
+        function formatDate(date) {
+            return date.toISOString().split('T')[0];
+        }
+
+        // Render the calendar for the current week
+        function renderCalendar() {
+            const startOfWeek = new Date(currentStartDate);
+            startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay()); // Set to Sunday
+
+            const endOfWeek = new Date(startOfWeek);
+            endOfWeek.setDate(endOfWeek.getDate() + 6); // Set to Saturday
+
+            // Update the week title
+            document.getElementById("weekTitle").textContent = `Week of ${startOfWeek.toLocaleDateString()} - ${endOfWeek.toLocaleDateString()}`;
+
+            const calendarBody = document.getElementById("calendarBody");
+            calendarBody.innerHTML = '';
+
+            // Loop through the days of the week
+            for (let i = 0; i < 7; i++) {
+                const currentDay = new Date(startOfWeek);
+                currentDay.setDate(startOfWeek.getDate() + i);
+                const dayString = formatDate(currentDay);
+
+                const dayDiv = document.createElement("div");
+                dayDiv.classList.add("day");
+
+                const dayHeader = document.createElement("div");
+                dayHeader.classList.add("day-header");
+                dayHeader.textContent = daysOfWeek[i];
+
+                // Create time slots for the day
+                const timeSlotsDiv = document.createElement("div");
+                timeSlots.forEach(slot => {
+                    const timeSlotDiv = document.createElement("div");
+                    timeSlotDiv.classList.add("time-slot");
+                    timeSlotDiv.textContent = slot;
+
+                    // Add any events already present for this slot
+                    const eventKey = `${dayString} ${slot}`;
+                    if (eventData[eventKey]) {
+                        const eventDiv = document.createElement("div");
+                        eventDiv.classList.add("event");
+                        eventDiv.textContent = eventData[eventKey].title;
+                        eventDiv.onclick = () => openEventPopup(dayString, slot);
+                        timeSlotDiv.appendChild(eventDiv);
+                    }
+
+                    // Add event click listener
+                    timeSlotDiv.onclick = () => openEventPopup(dayString, slot);
+                    timeSlotsDiv.appendChild(timeSlotDiv);
+                });
+
+                dayDiv.appendChild(dayHeader);
+                dayDiv.appendChild(timeSlotsDiv);
+                calendarBody.appendChild(dayDiv);
+            }
+        }
+
+        // Open the event popup to add/edit an event
+        function openEventPopup(day, slot) {
+            const eventKey = `${day} ${slot}`;
+
+            // If there's already an event, load its data
+            const event = eventData[eventKey] || { title: '', description: '' };
+            document.getElementById("eventTitle").value = event.title;
+            document.getElementById("eventDescription").value = event.description;
+
+            // Set up the save button to store the event
+            document.getElementById("saveEvent").onclick = () => {
+                eventData[eventKey] = {
+                    title: document.getElementById("eventTitle").value,
+                    description: document.getElementById("eventDescription").value
+                };
+                renderCalendar(); // Re-render the calendar with the new event
+                document.getElementById("eventPopup").style.display = 'none';
+            };
+
+            // Show the event popup
+            document.getElementById("eventPopup").style.display = 'block';
+        }
+
+        // Close the event popup without saving
+        document.getElementById("closePopup").onclick = () => {
+            document.getElementById("eventPopup").style.display = 'none';
+        };
+
+        // Navigate to the previous week
+        document.getElementById("prevWeek").onclick = () => {
+            currentStartDate.setDate(currentStartDate.getDate() - 7);
+            renderCalendar();
+        };
+
+        // Navigate to the next week
+        document.getElementById("nextWeek").onclick = () => {
+            currentStartDate.setDate(currentStartDate.getDate() + 7);
+            renderCalendar();
+        };
+
+        // Initial render
+        renderCalendar();
+    </script>
 </body>
 </html>
